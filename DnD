@@ -1,0 +1,55 @@
+#!/bin/bash
+
+echo "Welcome Adventurer!" 
+read -p "What is your name? " name
+
+
+age_check(){
+echo "You approach a tavern."
+read -p "The Orc asks you how old you are. " age
+
+ if (($age >= 21))
+
+ then
+	 echo "The Orc lets you pass"
+	 return 1
+ else 
+	 echo "You may not enter the tavern, little one"
+	 return 0
+
+ fi
+
+}
+
+age_check
+tavernpass=$?
+
+tavern_chrcheck(){
+ if (($tavernpass == 0))
+ then 
+ 	echo "Roll a charisma check"
+	local chr=$(( $RANDOM % 10))
+		echo "You rolled a $chr"
+		if (($chr >= 5))
+		then
+			echo "You tell the orc you are the chimney sweep. He allows you to enter."
+		else 
+			echo "You claim that you work there. The orc does not believe you."
+			return 1
+		fi
+ 
+ else
+	echo "You enter the tavern"
+ fi
+}
+
+tavern_chrcheck
+
+
+in_tavern(){
+echo "Roll for int to look around the tavern"
+}	
+
+
+
+
