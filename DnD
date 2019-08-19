@@ -76,15 +76,143 @@ tavern_stealthcheck(){
  fi
 }
 
+
 in_tavern(){
-echo "Roll for int to look around the tavern"
+ echo "Roll for perception to look around the tavern"
+ local per=$(( $RANDOM % 10))
+ echo "You rolled a $per"
+
+ if (($per <=4))
+ then 
+ 	echo "You notice a trap door"
+ else (($per >=4))
+	echo "You hear strange whisperings coming from a trap door in the corner."
+ fi
 }	
 
+tavern_stealth(){
 
-if (($tavernpass == 0))
-then tavern_stealthcheck
-else in_tavern
-fi
+ if (($tavernpass == 0))
+ then
+ 	if (($tavern_chrfail == 0))
+ 	then tavern_stealthcheck
+ 	in_tavern
+ 	else (($tavern_chrfail == 1))
+ 	in_tavern
+ 	fi
+ 
+ else (($tavernpass == 1))
+ 	in_tavern	
+ fi
+}
+
+tavern_stealth
+
+read -p "$name would you like to roll for int, str or magic? " trapdoor
+
+trapdoor_int(){
+ if (( $roll >=5))
+ then 
+ 	echo "You notice an elven puzzle lock. You solve it successfully."
+ 	return 1
+ else 
+ 	echo "You notice an elven puzzle lock. You are unable to solve it."
+ 	read -p "Would you like to roll for str or magic? " try_again
+	return 0
+ fi
+}
+
+
+trapdoor_str(){
+ if (( $roll >=5))
+ then 
+ 	echo "You pull the trapdoor open, breaking its hinges."
+	return 1
+ else 
+ 	echo "You attempt to pull open the trapdoor but it doesn't budge."
+ 	read -p "Would you like to roll for int or magic? " try_again
+	return 0
+ fi
+
+}
+
+trapdoor_magic(){
+ if (( $roll >=5))
+ then 
+ 	echo "You enchant the trapdoor, opening the lock."
+ 	return 1
+ else
+ 	echo "You whisper a spell but cannot open the trapdoor."
+ 	read -p "Would you like to roll for int or str? " try_again
+ 	return 0
+ fi
+}
+
+open_trapdoor(){
+ local roll=$(( $RANDOM % 10))
+ echo "You rolled a $roll"
+
+ if [ "$trapdoor" == "int" ]
+ then 
+ 	trapdoor_int
+ 	open=$?
+
+ elif [ "$trapdoor" == "str" ]
+ then 
+ 	trapdoor_str
+ 	open=$?
+
+ elif [ "$trapdoor" == "magic" ]
+ then 
+ 	trapdoor_magic
+ 	open=$?
+ fi 
+}
+
+
+open_trapdoor
+
+open_true(){
+ if (( $open == 1))
+ then
+ 	echo "You feel a chill as you enter the basement"
+ 	read -p "Would you like to roll for per or magic to look around? " look_basement
+ else (( $open == 0))
+ 	case $try_again in
+	"int") trapdoor_int;;
+ 	"magic") trapdoor_magic;;
+ 	"str") trapdoor_str;;
+	esac
+ fi
+}
+
+open_true
+
+in_basement(){
+ local roll=$(( $RANDOM % 10))
+ echo "You rolled a $roll"
+
+ if [ "$look_basement" == "per" ]
+ then
+ 	if (( $roll >=5))
+ 	then 
+ 		echo "Your eyes adjust to the darkness and you notice a treasure chest"
+ 	else
+ 		read -p "You notice a torch. Would you like to light it? Yes/no " torch
+ 	fi
+ else [ "$look_basement" == "magic" ]
+ 	if (( $roll >=5))
+ 	then
+ 		echo "You summon a glowing orb of light"
+ 	else 
+ 		read -p "Your magical light orb sputters out. From its brief glow you notice a torch on the wall. Would you like to light it? Yes/no " torch
+	fi
+
+ fi
+
+}
+
+in_basement
 
 
 
