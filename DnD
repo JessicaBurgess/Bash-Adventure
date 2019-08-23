@@ -265,17 +265,80 @@ light_torch(){
 light_torch
 
 
-echo "You take the treasure home and distribute it amongst the villagers. You have saved your town from starvation in the winter ahead. Congratulations, $name, you are a hero!"
+leave_tavern(){
 
+ echo "You carry the treasure back up the stairs. The tavern host appears displeased that you are attempting to carry off his treasure."
+ read -p "run or fight? " run_fight
 
+ if [ "$run_fight" == "run" ]
+ then 
+ 	echo "You manage to escape out the window and flee into the forest."
+	return 0
 
+ else [ "$run_fight" == "fight" ]
+ local roll=$(( $RANDOM % 10))
+ 	if (( $roll ==10))
+ 	then 
+ 		echo "You experience a sudden surge of strength and manage to fight off the Orc guard and all the villagers. You escape into the forest."
+ 	else
+ 		echo "The Orc guard and everyone in the tavern attacks you. The Orc stabs you through the heart. You are dead."
+ 		exit
+	fi
+ fi
 
+}
 
+leave_tavern
 
+enter_forest(){
+ local roll=$(( $RANDOM % 10))
+ echo "Roll for perception to look around the forest."
+ echo "You rolled a $roll."
+ if ((0<=$roll && $roll<=3))
+ then
+ 	echo "The forest is dark and ominous."
+ 	return 0
+ elif ((4<=$roll && $roll<=7))
+ then
+ 	echo "You hear the rushing of a stream somewhere in the darkness of the forest." 
+ 	return 1
+ else ((8<=$roll && $roll<=10)) 
+ 	echo "The forest is dark yet rings with the melodies of songbirds and a rushing stream."
+ 	return 1
+ fi
 
+}
+enter_forest
+stream=$?
 
+find_stream(){
+ if (( $stream ==1))
+ then
+ 	read -p "Would you like to follow the sound to find the stream? yes/no " findstream
+ 	if [ "$findstream" == "yes" ]
+ 	then 
+ 		follow_sound
+ 	else [ "$findstream" == "no" ]
+ 	echo "You decide to seek shelter instead of looking for the stream."
+ 		find_shelter
+ 	fi
+ else (( $stream ==0))
+ 	echo "You decide to seek shelter from the chill wind and ominous woods."
+ fi
+}
 
+follow_sound(){
+echo "You follow the sound of the stream until you arrive at a dazzling brook. Rainbows dance with enchantment through the ripples in the surface."
 
+read -p "Would you like to travel upstream or downstream? " direction
 
+}
+
+find_shelter(){
+ echo "You see a faint trail through the woods. You follow it, hoping it will lead you to shelter."
+
+}
+
+find_stream
 
 
